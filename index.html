@@ -1,98 +1,152 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chrono Bulward v0.2.27 (modular)</title>
-<style>
-  body { margin:0; background:#222; color:#eee; font-family:monospace; text-align:center; }
-  #gameCanvas { background:#333; display:none; margin:0 auto; border:2px solid #000; }
-  #menu, #settings, #help { margin-top:20px; }
-  h1 { margin:20px; }
-  .unit-settings { border:1px solid #555; padding:10px; margin:10px auto; width:90%; max-width:420px; text-align:left; }
-  input[type=range] { width:230px; }
-  #ui { margin-top:10px; display:none; }
-  #ui button { margin:5px; padding:8px 16px; font-size:14px; }
-  #help, #settings { display:none; text-align:left; max-width:700px; margin:20px auto; padding:12px; background:#111; border:1px solid #555; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chrono Bulward v0.2.27 (modular)</title>
+  <style>
+    body {
+      margin: 0;
+      background: #222;
+      color: #eee;
+      font-family: monospace;
+      text-align: center;
+    }
+
+    #gameCanvas {
+      background: #333;
+      display: none;
+      margin: 0 auto;
+      border: 2px solid #000;
+    }
+
+    #menu,
+    #settings,
+    #help {
+      margin-top: 20px;
+    }
+
+    h1 {
+      margin: 20px;
+    }
+
+    .unit-settings {
+      border: 1px solid #555;
+      padding: 10px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 420px;
+      text-align: left;
+    }
+
+    input[type=range] {
+      width: 230px;
+    }
+
+    #ui {
+      margin-top: 10px;
+      display: none;
+    }
+
+    #ui button {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    #help,
+    #settings {
+      display: none;
+      text-align: left;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 12px;
+      background: #111;
+      border: 1px solid #555;
+    }
+  </style>
 </head>
+
 <body>
-<h1 id="title">Chrono Bulward v0.2.27 (modular)</h1>
+  <h1 id="title">Chrono Bulward v0.2.27 (modular)</h1>
 
-<div id="menu">
-  <button onclick="startGame()">ゲーム開始</button>
-  <button onclick="showSettings()">設定</button>
-  <button onclick="showHelp()">説明</button>
-</div>
-
-<!-- 設定画面 -->
-<div id="settings">
-  <h2>ユニット調整</h2>
-  <div id="unitSliders"></div>
-  <div style="margin-top:8px;">
-    <button onclick="backToMenu()">戻る</button>
-    <button onclick="applySettingsAndStart()">ゲーム開始</button>
+  <div id="menu">
+    <button onclick="startGame()">ゲームStart</button>
+    <button onclick="showSettings()">設定</button>
+    <button onclick="showHelp()">説明</button>
   </div>
-</div>
 
-<!-- 説明画面 -->
-<div id="help">
-  <h2>ゲームのルール</h2>
-  <p>自陣（下側）からユニットを召喚し、敵陣（上側）から進行してくる敵を防ぎます。<br>
-  ユニット同士が接触すると戦闘開始、どちらかが倒れるまで移動を停止して戦闘を続けます。</p>
-
-  <h2>勝敗条件</h2>
-  <ul>
-    <li>敵ユニットが自陣に到達すると自陣HPが減少</li>
-    <li>味方ユニットが敵陣に到達すると敵陣HPが減少</li>
-    <li>どちらかのHPがゼロになると勝敗が決定</li>
-  </ul>
-
-  <h2>主要ユニット</h2>
-  <ul>
-    <li><b>ナイト</b>：近接。標準的な耐久と攻撃</li>
-    <li><b>アーチャー</b>：遠距離。射程内を攻撃</li>
-    <li><b>クレリック</b>：回復。射程内の味方を回復</li>
-    <li><b>ゴブリン/オーク/ゴーレム</b>：敵の前衛</li>
-    <li><b>シャーマン/ファントム</b>：敵の遠隔攻撃</li>
-  </ul>
-
-  <button onclick="backToMenuFromHelp()">戻る</button>
-</div>
-
-<canvas id="gameCanvas" width="400" height="600"></canvas>
-
-<div id="ui">
-  <button onclick="chooseUnit('swordsman')">ナイト召喚</button>
-  <button onclick="chooseUnit('archer')">アーチャー召喚</button>
-  <button onclick="chooseUnit('healer')">クレリック召喚</button>
-</div>
-
-<!-- スペシャル攻撃 UI -->
-<div id="specialUI" style="position:relative; margin-top:10px; background:#111; padding:10px; border-top:2px solid #555;">
-  <div>
-    <label>❄️ フリーズ</label>
-    <progress id="freezeBar" value="0" max="100"></progress>
-    <button id="freezeBtn" onclick="useSpecial('freeze')" disabled>発動</button>
+  <!-- 設定画面 -->
+  <div id="settings">
+    <h2>ユニット調整</h2>
+    <div id="unitSliders"></div>
+    <div style="margin-top:8px;">
+      <button onclick="backToMenu()">戻る</button>
+      <button onclick="applySettingsAndStart()">ゲーム開始</button>
+    </div>
   </div>
-  <div>
-    <label>☄️ メテオ</label>
-    <progress id="meteorBar" value="0" max="150"></progress>
-    <button id="meteorBtn" onclick="useSpecial('meteor')" disabled>発動</button>
-  </div>
-  <div>
-    <label>✨ ヒーリング</label>
-    <progress id="healBar" value="0" max="120"></progress>
-    <button id="healBtn" onclick="useSpecial('heal')" disabled>発動</button>
-  </div>
-</div>
 
-  
-<!-- スクリプト読み込み（順番に注意） -->
-<script src="units.js" defer></script>
-<script src="projectiles.js" defer></script>
-<script src="ui.js" defer></script>
-<script src="game.js" defer></script>
-<!-- ★ 最後に読み込む -->
+  <!-- 説明画面 -->
+  <div id="help">
+    <h2>ゲームのルール</h2>
+    <p>自陣（下側）からユニットを召喚し、敵陣（上側）から進行してくる敵を防ぎます。<br>
+      ユニット同士が接触すると戦闘開始、どちらかが倒れるまで移動を停止して戦闘を続けます。</p>
+
+    <h2>勝敗条件</h2>
+    <ul>
+      <li>敵ユニットが自陣に到達すると自陣HPが減少</li>
+      <li>味方ユニットが敵陣に到達すると敵陣HPが減少</li>
+      <li>どちらかのHPがゼロになると勝敗が決定</li>
+    </ul>
+
+    <h2>主要ユニット</h2>
+    <ul>
+      <li><b>ナイト</b>：近接。標準的な耐久と攻撃</li>
+      <li><b>アーチャー</b>：遠距離。射程内を攻撃</li>
+      <li><b>クレリック</b>：回復。射程内の味方を回復</li>
+      <li><b>ゴブリン/オーク/ゴーレム</b>：敵の前衛</li>
+      <li><b>シャーマン/ファントム</b>：敵の遠隔攻撃</li>
+    </ul>
+
+    <button onclick="backToMenuFromHelp()">戻る</button>
+  </div>
+
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+
+  <div id="ui">
+    <button onclick="chooseUnit('swordsman')">ナイト召喚</button>
+    <button onclick="chooseUnit('archer')">アーチャー召喚</button>
+    <button onclick="chooseUnit('healer')">クレリック召喚</button>
+  </div>
+
+  <!-- スペシャル攻撃 UI -->
+  <div id="specialUI"
+    style="position:relative; margin-top:10px; background:#111; padding:10px; border-top:2px solid #555;">
+    <div>
+      <label>❄️ フリーズ</label>
+      <progress id="freezeBar" value="0" max="100"></progress>
+      <button id="freezeBtn" onclick="useSpecial('freeze')" disabled>発動</button>
+    </div>
+    <div>
+      <label>☄️ メテオ</label>
+      <progress id="meteorBar" value="0" max="150"></progress>
+      <button id="meteorBtn" onclick="useSpecial('meteor')" disabled>発動</button>
+    </div>
+    <div>
+      <label>✨ ヒーリング</label>
+      <progress id="healBar" value="0" max="120"></progress>
+      <button id="healBtn" onclick="useSpecial('heal')" disabled>発動</button>
+    </div>
+  </div>
+
+
+  <!-- スクリプト読み込み（順番に注意） -->
+  <script src="units.js" defer></script>
+  <script src="projectiles.js" defer></script>
+  <script src="ui.js" defer></script>
+  <script src="game.js" defer></script>
+  <!-- ★ 最後に読み込む -->
 </body>
+
 </html>
